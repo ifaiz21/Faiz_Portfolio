@@ -123,7 +123,7 @@ const Hero = () => {
               </div>
               {/* Social Media Icons */}
               <div className="flex mt-8 space-x-4">
-                <a href="www.linkedin.com/in/muhammad-faiz-9b3541240" className="text-white bg-gray-800 h-12 w-12 rounded-full flex items-center justify-center hover:bg-gray-900 transition-colors duration-300">
+                <a href="https://www.linkedin.com/in/muhammad-faiz-9b3541240" className="text-white bg-gray-800 h-12 w-12 rounded-full flex items-center justify-center hover:bg-gray-900 transition-colors duration-300">
                   <Linkedin size={24} />
                 </a>
                 <a href="https://x.com/Faizfahim511" className="text-white bg-gray-800 h-12 w-12 rounded-full flex items-center justify-center hover:bg-gray-900 transition-colors duration-300">
