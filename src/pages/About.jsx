@@ -3,6 +3,7 @@ import { profile } from "../data/profile";
 import SectionHeading from "../components/ui/SectionHeading";
 import AnimatedSection from "../components/ui/AnimatedSection";
 
+
 export default function About() {
   return (
     <section id="about" className="section-padding relative bg-surface-raised">
