@@ -1,70 +1,64 @@
-import React from 'react';
-import {BookIcon } from  "lucide-react";
+import { GraduationCap } from "lucide-react";
+import { educationData } from "../data/education";
+import SectionHeading from "../components/ui/SectionHeading";
+import AnimatedSection from "../components/ui/AnimatedSection";
 
-const Education = () => {
-
-  const educationData = [
-    {
-      degree: "Bachelor In Computer Sciences | BS-CS",
-      institution: "University Of Management And Technology",
-      date: "2021-2025 | Completed",
-      logoUrl: "./Images/umt-logo.jpeg", // Replace with your logo path
-      statusClass: "text-green-600 font-bold"
-    },
-    {
-      degree: "Intermediate | ICS",
-      institution: "Punjab Group Of Colleges",
-      date: "2019-2021 | Completed",
-      logoUrl: "./Images/punjab-logo.png", // Replace with your logo path
-      statusClass: "text-green-600 font-bold"
-    },
-    {
-      degree: "Matric | Computer sciences",
-      institution: "Allied School",
-      date: "2017-2019 | Completed",
-      logoUrl: "./Images/allied-logo.png", // Replace with your logo path
-      statusClass: "text-green-600 font-bold"
-    }
-  ];
-
+export default function Education() {
   return (
-    <section id="education" className="bg-gray-900 font-sans py-16 sm:py-24">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Title */}
-        <div className="text-center mb-4">
-          <h2 className="text-3xl sm:text-4xl font-bold text-[#D1D5DB] flex items-center justify-center">
-            <BookIcon />
-            My <span className="text-blue-600 ml-2">Education</span>
-          </h2>
-        </div>
-        
-        {/* Subtitle / Quote */}
-        <p className="text-center text-[#D1D5DB] italic mb-12">
-          "Education Is Not The Learning Of Facts, But The Training Of The Mind To Think."
-        </p>
+    <section id="education" className="section-padding bg-surface-raised">
+      <div className="section-container">
+        <AnimatedSection>
+          <SectionHeading
+            icon={GraduationCap}
+            title="My"
+            highlight="Education"
+            subtitle="Academic foundation in computer science and software engineering."
+          />
+        </AnimatedSection>
 
-        {/* Education Cards Container */}
-        <div className="max-w-4xl mx-auto space-y-8">
+        <div className="mx-auto grid max-w-4xl gap-6">
           {educationData.map((edu, index) => (
-            <div key={index} className="bg-[#D1D5DB] rounded-xl shadow-lg p-6 sm:p-8 flex flex-col sm:flex-row items-center space-y-6 sm:space-y-0 sm:space-x-8 hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
-              <div className="flex-shrink-0">
-                <img 
-                    src={edu.logoUrl} 
-                    alt={`${edu.institution} logo`} 
-                    className="h-32 w-32 object-contain"
-                    onError={(e) => { e.target.onerror = null; e.target.src='https://placehold.co/150x150/CCCCCC/FFFFFF?text=Logo'; }}
-                />
-              </div>
-              <div className="flex-grow text-center sm:text-left">
-                <h3 className="text-2xl font-bold text-gray-800">{edu.degree}</h3>
-                <p className="text-md font-semibold text-gray-600 mb-2">{edu.institution}</p>
-                <p className={`text-md ${edu.statusClass}`}>{edu.date}</p>
-              </div>
-            </div>
+            <AnimatedSection key={index} delay={index * 0.1}>
+              <article className="glass-card group flex flex-col items-center gap-6 p-6 transition-all duration-300 hover:border-cyan-500/20 sm:flex-row sm:p-8">
+                <div className="flex h-24 w-24 flex-shrink-0 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white/5 p-3">
+                  <img
+                    src={edu.logoUrl}
+                    alt={`${edu.institution} logo`}
+                    className="max-h-full max-w-full object-contain"
+                    onError={(e) => {
+                      e.target.style.display = "none";
+                      e.target.nextSibling.style.display = "flex";
+                    }}
+                  />
+                  <div className="hidden h-full w-full items-center justify-center">
+                    <GraduationCap size={32} className="text-cyan-400" />
+                  </div>
+                </div>
+
+                <div className="flex-1 text-center sm:text-left">
+                  <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start">
+                    <h3 className="text-xl font-bold text-white">
+                      {edu.degree}
+                    </h3>
+                    <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-medium text-emerald-400">
+                      {edu.status}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-sm font-medium text-cyan-400">
+                    {edu.institution}
+                  </p>
+                  <p className="mt-1 text-xs text-gray-500">
+                    {edu.location} · {edu.date}
+                  </p>
+                  <p className="mt-3 text-sm leading-relaxed text-gray-400">
+                    {edu.description}
+                  </p>
+                </div>
+              </article>
+            </AnimatedSection>
           ))}
         </div>
       </div>
     </section>
   );
 }
-export default Education;

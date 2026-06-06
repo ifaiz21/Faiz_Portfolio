@@ -1,232 +1,188 @@
-"use client"
-
 import { useState, useEffect } from "react";
-import { GithubIcon, Twitter, Linkedin, Instagram, ArrowRight, MessageCircleHeart } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowRight, Download, MapPin } from "lucide-react";
+import { profile } from "../data/profile";
+import SocialLinks from "../components/ui/SocialLinks";
+import { scrollToSection } from "../hooks/useScrollSpy";
 
-// This is the main Hero component, now with the animated background integrated.
-const Hero = () => {
-  const [particles, setParticles] = useState([]);
+function Typewriter({ words, speed = 80 }) {
+  const [index, setIndex] = useState(0);
+  const [displayText, setDisplayText] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  // Generate random particles for background animation
   useEffect(() => {
-    const generateParticles = () => {
-      const newParticles = [];
-      for (let i = 0; i < 50; i++) {
-        newParticles.push({
-          id: i,
-          x: Math.random() * 100,
-          y: Math.random() * 100,
-          size: Math.random() * 4 + 2,
-          speedX: (Math.random() - 0.5) * 0.5,
-          speedY: (Math.random() - 0.5) * 0.5,
-        });
-      }
-      setParticles(newParticles);
-    };
-
-    generateParticles();
-  }, []);
-
-  // Animate particles
-  useEffect(() => {
-    const animateParticles = () => {
-      setParticles((prevParticles) =>
-        prevParticles.map((particle) => ({
-          ...particle,
-          x: (particle.x + particle.speedX + 100) % 100,
-          y: (particle.y + particle.speedY + 100) % 100,
-        }))
-      );
-    };
-
-    const interval = setInterval(animateParticles, 50);
-    return () => clearInterval(interval);
-  }, []);
-
-  const scrollToAbout = () => {
-    const aboutSection = document.getElementById('about');
-    if (aboutSection) {
-      aboutSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+    const currentWord = words[index];
+    const timeout = setTimeout(
+      () => {
+        if (!isDeleting) {
+          setDisplayText(currentWord.substring(0, displayText.length + 1));
+          if (displayText === currentWord) {
+            setTimeout(() => setIsDeleting(true), 2000);
+          }
+        } else {
+          setDisplayText(currentWord.substring(0, displayText.length - 1));
+          if (displayText === "") {
+            setIsDeleting(false);
+            setIndex((prev) => (prev + 1) % words.length);
+          }
+        }
+      },
+      isDeleting ? speed / 2 : speed
+    );
+    return () => clearTimeout(timeout);
+  }, [displayText, isDeleting, index, words, speed]);
 
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      {/* Animated Background */}
-      <div className="absolute inset-0">
-        {/* Particles */}
-        {particles.map((particle) => (
-          <div
-            key={particle.id}
-            className="absolute rounded-full bg-blue-400 opacity-60 animate-pulse"
-            style={{
-              left: `${particle.x}%`,
-              top: `${particle.y}%`,
-              width: `${particle.size}px`,
-              height: `${particle.size}px`,
-              boxShadow: `0 0 ${particle.size * 2}px rgba(59, 130, 246, 0.5)`,
-            }}
-          />
-        ))}
-
-        {/* Connecting Lines */}
-        <svg className="absolute inset-0 w-full h-full opacity-30">
-          {particles.map((particle, index) => {
-            const nearbyParticles = particles.filter((p, i) => {
-              if (i === index) return false;
-              const distance = Math.sqrt(
-                Math.pow(p.x - particle.x, 2) + Math.pow(p.y - particle.y, 2)
-              );
-              return distance < 15;
-            });
-
-            return nearbyParticles.map((nearbyParticle, nearbyIndex) => (
-              <line
-                key={`${index}-${nearbyIndex}`}
-                x1={`${particle.x}%`}
-                y1={`${particle.y}%`}
-                x2={`${nearbyParticle.x}%`}
-                y2={`${nearbyParticle.y}%`}
-                stroke="rgba(59, 130, 246, 0.3)"
-                strokeWidth="1"
-                className="animate-pulse"
-              />
-            ));
-          })}
-        </svg>
-
-        {/* Floating Geometric Shapes */}
-        <div className="absolute top-20 left-20 w-20 h-20 border border-blue-400 opacity-20 rotate-45 animate-spin-slow"></div>
-        <div className="absolute bottom-32 right-32 w-16 h-16 border border-purple-400 opacity-20 animate-bounce-slow"></div>
-        <div className="absolute top-1/2 left-10 w-12 h-12 bg-gradient-to-r from-blue-400 to-purple-400 opacity-20 rounded-full animate-pulse"></div>
-      </div>
-      
-      {/* Main Content of Hero Section */}
-      <div className="relative z-10 flex items-center justify-center min-h-screen p-4">
-        <section id="home" className="font-sans flex items-center justify-center w-full">
-          <div className="container mx-auto flex flex-col md:flex-row items-center px-5 py-24">
-            {/* Left Column: Text Content */}
-            <div className="lg:flex-grow md:w-1/2 lg:pr-24 md:pr-16 flex flex-col md:items-start md:text-left mb-16 md:mb-0 items-center text-center">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl mb-4 font-bold text-white">
-                Hi There,
-                <br />
-                I'm Muhammad <span className="text-orange-500">Faiz</span>.
-              </h1>
-              <p className="mb-8 leading-relaxed text-lg text-gray-300">
-                I Am Into Web Development
-              </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start w-full">
-                <button onClick={scrollToAbout} className="inline-flex items-center text-white bg-indigo-600 border-0 py-3 px-8 focus:outline-none hover:bg-indigo-700 rounded-full text-lg font-semibold transition-colors duration-300 mb-4 sm:mb-0">
-                  About Me
-                  <ArrowRight className="h-5 w-5 ml-2" />
-                </button>
-              </div>
-              {/* Social Media Icons */}
-              <div className="flex mt-8 space-x-4">
-                <a href="https://www.linkedin.com/in/muhammad-faiz-9b3541240" className="text-white bg-gray-800 h-12 w-12 rounded-full flex items-center justify-center hover:bg-gray-900 transition-colors duration-300">
-                  <Linkedin size={24} />
-                </a>
-                <a href="https://x.com/Faizfahim511" className="text-white bg-gray-800 h-12 w-12 rounded-full flex items-center justify-center hover:bg-gray-900 transition-colors duration-300">
-                  <Twitter size={24} />
-                </a>
-                <a href="https://www.instagram.com/i._.faiiz?igsh=MTNpNnpmb2R4dXhoeQ==" className="text-white bg-gray-800 h-12 w-12 rounded-full flex items-center justify-center hover:bg-gray-900 transition-colors duration-300">
-                  <Instagram size={24} />
-                </a>
-                <a href="https://github.com/ifaiz21" className="text-white bg-gray-800 h-12 w-12 rounded-full flex items-center justify-center hover:bg-gray-900 transition-colors duration-300">
-                  <GithubIcon size={24} />
-                </a>
-                <a href="https://wa.me/qr/4RG7OSAUIKLKA1" className="text-white bg-gray-800 h-12 w-12 rounded-full flex items-center justify-center hover:bg-gray-900 transition-colors duration-300">
-                  <MessageCircleHeart size={24} />
-                </a>
-              </div>
-            </div>
-
-            {/* Right Column: Image */}
-            <div className="lg:max-w-lg lg:w-full md:w-1/2 w-5/6">
-              <img
-                className="object-cover object-center rounded-full border-8 border-white shadow-2xl mx-auto"
-                alt="Muhammad Faiz"
-                src="./Images/dp.jpeg"
-                onError={(e) => { e.target.onerror = null; e.target.src='https://placehold.co/500x500/E2E8F0/374151?text=Image+Error'; }}
-              />
-            </div>
-          </div>
-        </section>
-      </div>
-
-      <style jsx>{`
-        @keyframes spin-slow {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
-        }
-
-        @keyframes spin-fast {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
-        }
-
-        @keyframes bounce-slow {
-          0%,
-          100% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-10px);
-          }
-        }
-
-        @keyframes fade-in {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @keyframes fade-in-delay {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .animate-spin-slow {
-          animation: spin-slow 8s linear infinite;
-        }
-
-        .animate-spin-fast {
-          animation: spin-fast 2s linear infinite;
-        }
-
-        .animate-bounce-slow {
-          animation: bounce-slow 3s ease-in-out infinite;
-        }
-
-        .animate-fade-in {
-          animation: fade-in 1s ease-out;
-        }
-
-        .animate-fade-in-delay {
-          animation: fade-in-delay 1s ease-out 0.3s both;
-        }
-      `}</style>
-    </div>
+    <span className="font-mono text-cyan-400">
+      {displayText}
+      <span className="animate-blink text-cyan-400">|</span>
+    </span>
   );
-};
+}
 
-export default Hero;
+export default function Hero() {
+  return (
+    <section
+      id="home"
+      className="relative flex min-h-screen items-center overflow-hidden bg-surface"
+    >
+      {/* Background Effects */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-0 bg-grid-pattern bg-grid opacity-40" />
+        <div className="absolute -left-40 top-20 h-96 w-96 rounded-full bg-cyan-500/10 blur-3xl" />
+        <div className="absolute -right-40 bottom-20 h-96 w-96 rounded-full bg-violet-500/10 blur-3xl" />
+        <div className="absolute left-1/2 top-1/3 h-64 w-64 -translate-x-1/2 rounded-full bg-blue-500/5 blur-3xl" />
+      </div>
+
+      <div className="section-container relative z-10 w-full pt-28 pb-16">
+        <div className="mx-auto flex max-w-6xl flex-col items-center gap-12 lg:flex-row lg:gap-16">
+          {/* Text Content */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="flex-1 text-center lg:text-left"
+          >
+            {profile.openToWork && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.2 }}
+                className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-1.5 text-sm font-medium text-emerald-400"
+              >
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                </span>
+                Open to Work
+              </motion.div>
+            )}
+
+            <p className="mb-3 font-mono text-sm uppercase tracking-widest text-gray-500">
+              Hello, World! I'm
+            </p>
+
+            <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl xl:text-7xl">
+              Muhammad{" "}
+              <span className="gradient-text">{profile.firstName}</span>
+            </h1>
+
+            <div className="mt-4 text-xl sm:text-2xl lg:text-3xl">
+              <Typewriter words={profile.roles} />
+            </div>
+
+            <p className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-gray-400 sm:text-lg lg:mx-0">
+              {profile.tagline}. Based in{" "}
+              <span className="inline-flex items-center gap-1 text-gray-300">
+                <MapPin size={14} className="text-cyan-400" />
+                {profile.location}
+              </span>
+            </p>
+
+            {/* Stats */}
+            <div className="mt-8 flex flex-wrap justify-center gap-8 lg:justify-start">
+              {profile.stats.map((stat) => (
+                <div key={stat.label} className="text-center lg:text-left">
+                  <p className="text-2xl font-bold text-white">{stat.value}</p>
+                  <p className="text-xs uppercase tracking-wider text-gray-500">
+                    {stat.label}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* CTAs */}
+            <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row lg:justify-start">
+              <button
+                onClick={() => scrollToSection("work")}
+                className="btn-primary"
+              >
+                View Projects
+                <ArrowRight size={18} />
+              </button>
+              <a
+                href={profile.resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary"
+              >
+                <Download size={18} />
+                Download Resume
+              </a>
+            </div>
+
+            <SocialLinks className="mt-10 justify-center lg:justify-start" />
+          </motion.div>
+
+          {/* Profile Image */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            className="relative flex-shrink-0"
+          >
+            <div className="relative">
+              {/* Glow ring */}
+              <div className="absolute -inset-4 rounded-full bg-gradient-to-r from-cyan-500/20 via-blue-500/20 to-violet-500/20 blur-2xl" />
+              <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-violet-500 opacity-60" />
+
+              <div className="relative h-64 w-64 overflow-hidden rounded-full border-4 border-surface sm:h-72 sm:w-72 lg:h-80 lg:w-80">
+                <img
+                  src={profile.avatarUrl}
+                  alt={profile.name}
+                  className="h-full w-full object-cover"
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                    e.target.nextSibling.style.display = "flex";
+                  }}
+                />
+                <div className="hidden h-full w-full items-center justify-center bg-gradient-to-br from-cyan-600 to-violet-700">
+                  <span className="text-6xl font-bold text-white">MF</span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Scroll indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5 }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        >
+          <button
+            onClick={() => scrollToSection("about")}
+            aria-label="Scroll to about section"
+            className="flex flex-col items-center gap-2 text-gray-500 transition-colors hover:text-cyan-400"
+          >
+            <span className="text-xs uppercase tracking-widest">Scroll</span>
+            <div className="h-8 w-5 rounded-full border-2 border-current p-1">
+              <div className="mx-auto h-2 w-1 animate-bounce rounded-full bg-current" />
+            </div>
+          </button>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
